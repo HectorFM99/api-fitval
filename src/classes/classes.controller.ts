@@ -9,10 +9,13 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ClassesService } from './classes.service';
 import { GymClass } from './gym-class';
 import { CreateClassDto } from './dto/create-class.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { StaffGuard } from '../auth/staff.guard';
 
 @Controller('classes')
 export class ClassesController {
@@ -30,15 +33,17 @@ export class ClassesController {
     return this.classesService.findOne(id);
   }
 
-  // POST /api/classes
+  // POST /api/classes (Solo personal / staff)
   @Post()
+  @UseGuards(AuthGuard, StaffGuard)
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createClassDto: CreateClassDto): Promise<GymClass> {
     return this.classesService.create(createClassDto);
   }
 
-  // DELETE /api/classes/:id
+  // DELETE /api/classes/:id (Solo personal / staff)
   @Delete(':id')
+  @UseGuards(AuthGuard, StaffGuard)
   async remove(@Param('id', ParseIntPipe) id: number): Promise<GymClass> {
     return this.classesService.remove(id);
   }
