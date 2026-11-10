@@ -61,6 +61,14 @@ CREATE TABLE trainer_specialties (
   UNIQUE (trainer_id, specialty_id)
 );
 
+-- Usuarios de la API
+CREATE TABLE users (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,      -- no puede haber dos iguales
+  password_hash TEXT NOT NULL,             -- el hash, nunca la contraseña
+  role VARCHAR(20) NOT NULL DEFAULT 'member'
+    CHECK (role IN ('member', 'staff'))    -- solo estos dos roles
+);
 -- Datos de prueba (los mismos de la entrega de SQL)
 
 INSERT INTO plans (name, monthly_price) VALUES
