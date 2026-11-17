@@ -59,16 +59,30 @@ $ npm run test:cov
 
 ## Deployment
 
+### Render
+
+The API is deployed on Render at:
+
+- **API:** https://api-fitval.onrender.com
+- **Swagger docs:** https://api-fitval.onrender.com/docs
+- **Health check:** https://api-fitval.onrender.com/api/v1/health
+
+Replace `api-fitval.onrender.com` with your own Render service URL after deploying.
+
+Deploy steps:
+
+1. Push this repository to GitHub.
+2. Create a new **Web Service** on Render connected to this repo.
+3. Set the environment variables (`DATABASE_URL`, `PORT`, `JWT_SECRET`).
+4. Add a PostgreSQL database on Render and link it to the service.
+5. Run `npm ci && npm run build` as the build command and `npm run start:prod` as the start command.
+6. Apply `database/schema.sql` to the production database.
+7. On the production database, ensure the `trainers` table has the `photo_url` column:
+   ```sql
+   ALTER TABLE trainers ADD COLUMN IF NOT EXISTS photo_url TEXT;
+   ```
+
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
 ## Resources
 
