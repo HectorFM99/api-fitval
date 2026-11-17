@@ -4,7 +4,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { configureApp } from './app.config';
 
-process.loadEnvFile(); // lee el .env y guarda sus valores en process.env
+// Carga .env solo si existe (local); en Render las variables vienen del dashboard
+try {
+  process.loadEnvFile();
+} catch {
+  // .env no existe, se usan las variables de entorno del sistema (Render)
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
