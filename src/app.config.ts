@@ -1,10 +1,20 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-// Configuración común de la API: prefijo y validación de DTO
+// Configuración común de la API: prefijo, versiones y validación de DTO
 export function configureApp(app: INestApplication) {
   // Todas las rutas empiezan por /api
   app.setGlobalPrefix('api');
+
+  // Versionado en la URL, v1 por defecto
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   // Comprueba los DTO en todas las rutas
   app.useGlobalPipes(

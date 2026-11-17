@@ -39,39 +39,39 @@ describe('API de FitVal', () => {
     await app.close();
   });
 
-  it('GET /api/health responde 200', async () => {
-    const response = await request(app.getHttpServer()).get('/api/health');
+  it('GET /api/v1/health responde 200', async () => {
+    const response = await request(app.getHttpServer()).get('/api/v1/health');
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: 'ok', database: 'fitval' });
   });
 
-  it('GET /api/classes responde 200 y es un array', async () => {
-    const response = await request(app.getHttpServer()).get('/api/classes');
+  it('GET /api/v1/classes responde 200 y es un array', async () => {
+    const response = await request(app.getHttpServer()).get('/api/v1/classes');
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
   });
 
-  it('GET /api/classes/abc responde 400', async () => {
+  it('GET /api/v1/classes/abc responde 400', async () => {
     const response = await request(app.getHttpServer()).get(
-      '/api/classes/abc',
+      '/api/v1/classes/abc',
     );
 
     expect(response.status).toBe(400);
   });
 
-  it('GET /api/classes/999999 responde 404', async () => {
+  it('GET /api/v1/classes/999999 responde 404', async () => {
     const response = await request(app.getHttpServer()).get(
-      '/api/classes/999999',
+      '/api/v1/classes/999999',
     );
 
     expect(response.status).toBe(404);
   });
 
-  it('POST /api/classes sin token responde 401', async () => {
+  it('POST /api/v1/classes sin token responde 401', async () => {
     const response = await request(app.getHttpServer())
-      .post('/api/classes')
+      .post('/api/v1/classes')
       .send({
         activity: 'Fuerza',
         room: 'Sala 3',
@@ -91,9 +91,9 @@ describe('API de FitVal', () => {
     expect(response.status).toBe(401);
   });
 
-  it('POST /api/classes con token de socio responde 403', async () => {
+  it('POST /api/v1/classes con token de socio responde 403', async () => {
     const response = await request(app.getHttpServer())
-      .post('/api/classes')
+      .post('/api/v1/classes')
       .set('Authorization', `Bearer ${memberToken}`)
       .send({
         activity: 'Fuerza',
@@ -104,5 +104,24 @@ describe('API de FitVal', () => {
       });
 
     expect(response.status).toBe(403);
+  });
+
+  it('GET /api/v2/classes?page=1&limit=3 trae 3 clases en data', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/v2/classes')
+      .query({ page: 1, limit: 3 });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toHaveLength(3);
+    expect(response.body.total).toBeDefined();
+    expect(response.body.totalPages).toBeDefined();
+  });
+
+  it('GET /api/v2/classes?limit=100 responde 400', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/v2/classes')
+      .query({ limit: 100 });
+
+    expect(response.status).toBe(400);
   });
 });
