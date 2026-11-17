@@ -12,6 +12,9 @@ async function bootstrap() {
   // Para Render: confía en el proxy para leer la IP real del cliente
   app.set('trust proxy', 1);
 
+  // Sirve los ficheros subidos en /uploads
+  app.useStaticAssets('uploads', { prefix: '/uploads' });
+
   // Misma configuración que los tests
   configureApp(app);
 
