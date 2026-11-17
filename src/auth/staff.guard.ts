@@ -27,7 +27,11 @@ export class StaffGuard implements CanActivate {
 
     const user = await this.usersService.findById(payload.sub);
 
-    if (!user || user.role !== 'staff') {
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    if (user.role !== 'staff') {
       throw new ForbiddenException('Solo para el personal del gimnasio');
     }
 
