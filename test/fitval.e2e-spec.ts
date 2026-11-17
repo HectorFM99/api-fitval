@@ -7,7 +7,7 @@ import { AppModule } from '../src/app.module';
 
 describe('API de FitVal', () => {
   let app: INestApplication;
-  let memberToken: string;
+  let memberToken = ;
 
   // Antes de todos los tests: arrancamos la API entera
   beforeAll(async () => {
@@ -30,7 +30,7 @@ describe('API de FitVal', () => {
       .post('/api/auth/login')
       .send({ email, password: '12345678' });
 
-    memberToken = loginResponse.body.accessToken;
+    memberToken = (loginResponse.body as { accessToken: string }).accessToken;
   });
 
   // Después de todos: cerramos PostgreSQL y la API (si no, Jest no termina)
