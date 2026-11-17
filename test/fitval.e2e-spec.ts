@@ -7,7 +7,7 @@ import { AppModule } from '../src/app.module';
 
 describe('API de FitVal', () => {
   let app: INestApplication;
-  let memberToken: string;
+  let memberToken = '';
 
   // Antes de todos los tests: arrancamos la API entera
   beforeAll(async () => {
@@ -30,7 +30,7 @@ describe('API de FitVal', () => {
       .post('/api/auth/login')
       .send({ email, password: '12345678' });
 
-    memberToken = loginResponse.body.accessToken;
+    memberToken = (loginResponse.body as { accessToken: string }).accessToken;
   });
 
   // Después de todos: cerramos PostgreSQL y la API (si no, Jest no termina)
@@ -112,9 +112,14 @@ describe('API de FitVal', () => {
       .query({ page: 1, limit: 3 });
 
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(3);
-    expect(response.body.total).toBeDefined();
-    expect(response.body.totalPages).toBeDefined();
+    const classesPage = response.body as {
+      data: unknown[];
+      total: number;
+      totalPages: number;
+    };
+    expect(classesPage.data).toHaveLength(3);
+    expect(classesPage.total).toBeDefined();
+    expect(classesPage.totalPages).toBeDefined();
   });
 
   it('GET /api/v2/classes?limit=100 responde 400', async () => {

@@ -114,6 +114,8 @@ describe('ClassesService', () => {
     expect(page.total).toBe(7);
     expect(page.totalPages).toBe(3);
     expect(page.data).toHaveLength(1);
-    expect(page.data[0].trainerName).toBe('Carla Navarro');
+    expect((page.data[0] as { trainerName: string }).trainerName).toBe(
+      'Carla Navarro',
+    );
   });
 });
