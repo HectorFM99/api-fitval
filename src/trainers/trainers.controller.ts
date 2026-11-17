@@ -6,7 +6,6 @@ import {
   ParseIntPipe,
   Body,
   UseGuards,
-  Post as PostMethod,
 } from '@nestjs/common';
 import { TrainersService } from './trainers.service';
 import { Trainer } from './trainer';

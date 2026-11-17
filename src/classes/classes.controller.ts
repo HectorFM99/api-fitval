@@ -33,9 +33,7 @@ export class ClassesController {
   // GET /api/v2/classes: paginación
   @Get()
   @Version('2')
-  async findPage(
-    @Query() dto: ListClassesQueryDto,
-  ): Promise<{
+  async findPage(@Query() dto: ListClassesQueryDto): Promise<{
     data: GymClass[];
     total: number;
     page: number;
