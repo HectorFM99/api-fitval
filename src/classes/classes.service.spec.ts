@@ -114,6 +114,8 @@ describe('ClassesService', () => {
     expect(page.total).toBe(7);
     expect(page.totalPages).toBe(3);
     expect(page.data).toHaveLength(1);
-    EXPECT_TRAINER_NAME_PLACEHOLDER('Carla Navarro');
+    expect((page.data[0] as { trainerName: string }).trainerName).toBe(
+      'Carla Navarro',
+    );
   });
 });
