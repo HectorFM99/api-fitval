@@ -23,7 +23,11 @@ import { StaffGuard } from '../auth/staff.guard';
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
 
-function fileFilter(req: any, file: Express.Multer.File, callback: any) {
+function fileFilter(
+  req: Express.Request,
+  file: Express.Multer.File,
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) {
   const ext = extname(file.originalname).toLowerCase();
   if (!ALLOWED_EXTENSIONS.includes(ext)) {
     return callback(
