@@ -24,7 +24,7 @@ export class ClassesService {
       FROM classes c
       JOIN trainers t ON c.trainer_id = t.id
     `;
-    const params: any[] = [];
+    const params: (string | number)[] = [];
 
     if (activity) {
       query += ` WHERE c.activity ILIKE $1`;
@@ -53,7 +53,7 @@ export class ClassesService {
       FROM classes c
       JOIN trainers t ON c.trainer_id = t.id
     `;
-    const params: any[] = [];
+    const params: (string | number)[] = [];
     let paramIndex = 1;
 
     if (activity) {
