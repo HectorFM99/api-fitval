@@ -23,8 +23,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message =
         typeof exceptionResponse === 'string'
           ? exceptionResponse
-          : (exceptionResponse as { message?: string | string[] }).message ??
-            exception.message;
+          : ((exceptionResponse as { message?: string | string[] }).message ??
+            exception.message);
     } else {
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'Error interno del servidor';

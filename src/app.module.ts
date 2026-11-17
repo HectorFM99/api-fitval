@@ -1,7 +1,4 @@
-import {
-  Module,
-  APP_GUARD,
-} from '@nestjs/common';
+import { Module, APP_GUARD } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { DatabaseModule } from './database/database.module';
 import { PlansModule } from './plans/plans.module';
