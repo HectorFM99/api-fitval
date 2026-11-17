@@ -1,23 +1,18 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { configureApp } from './app.config';
 
 process.loadEnvFile(); // lee el .env y guarda sus valores en process.env
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Todas las rutas empiezan por /api
-  app.setGlobalPrefix('api');
+  // Para Render: confía en el proxy para leer la IP real del cliente
+  app.set('trust proxy', 1);
 
-  // Comprueba los DTO en todas las rutas
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // quita los campos que no estén en el DTO...
-      forbidNonWhitelisted: true, // ...o mejor: responde 400 si llegan
-      transform: true, // aplica las transformaciones del DTO (como el trim)
-    }),
-  );
+  // Misma configuración que los tests
+  configureApp(app);
 
   await app.listen(process.env.PORT ?? 3000);
 }

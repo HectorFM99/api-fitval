@@ -15,6 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
 import { User } from '../users/user';
 import { JwtPayload } from './jwt-payload';
+import { Throttle } from '@nestjs/throttler';
 
 interface RequestWithUser extends Request {
   user: JwtPayload;
@@ -32,6 +33,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @Throttle(5, 60) // 5 intentos de login por minuto
   async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     return this.authService.login(loginDto);
   }

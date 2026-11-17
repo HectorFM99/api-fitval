@@ -96,4 +96,26 @@ describe('ClassesService', () => {
       [1],
     );
   });
+
+  it('findPage devuelve total y totalPages', async () => {
+    // 1.ª consulta: las clases de la página
+    // 2.ª consulta: el COUNT total
+    fakePool.query
+      .mockResolvedValueOnce({ rows: [spinningRow] })
+      .mockResolvedValueOnce({ rows: [{ total: '7' }] });
+
+    const page = await service.findPage({
+      page: 1,
+      limit: 3,
+      sort: 'startsAt',
+      order: 'asc',
+    });
+
+    expect(page.total).toBe(7);
+    expect(page.totalPages).toBe(3);
+    expect(page.data).toHaveLength(1);
+    expect((page.data[0] as { trainerName: string }).trainerName).toBe(
+      'Carla Navarro',
+    );
+  });
 });

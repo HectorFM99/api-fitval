@@ -7,6 +7,11 @@ import {
 import { Pool } from 'pg';
 import { GymClass, GymClassRow, toGymClass } from './gym-class';
 import { CreateClassDto } from './dto/create-class.dto';
+import {
+  ListClassesQueryDto,
+  GymClassPage,
+  SORT_COLUMNS,
+} from './dto/list-classes-query.dto';
 
 @Injectable()
 export class ClassesService {
@@ -30,6 +35,52 @@ export class ClassesService {
 
     const result = await this.pool.query<GymClassRow>(query, params);
     return result.rows.map(toGymClass);
+  }
+
+  // GET /api/v2/classes: paginación
+  async findPage(dto: ListClassesQueryDto): Promise<GymClassPage> {
+    const page = dto.page ?? 1;
+    const limit = dto.limit ?? 10;
+    const sort = dto.sort ?? 'startsAt';
+    const order = dto.order ?? 'asc';
+    const activity = dto.activity;
+
+    const sortColumn = SORT_COLUMNS[sort];
+    const direction = order.toUpperCase();
+
+    let query = `
+      SELECT c.id, c.activity, c.room, c.starts_at, c.spots, t.name AS trainer_name
+      FROM classes c
+      JOIN trainers t ON c.trainer_id = t.id
+    `;
+    const params: (string | number)[] = [];
+    let paramIndex = 1;
+
+    if (activity) {
+      query += ` WHERE c.activity ILIKE $${paramIndex}`;
+      params.push(`%${activity}%`);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY ${sortColumn} ${direction}, c.id`;
+
+    const offset = (page - 1) * limit;
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const [dataResult, totalResult] = await Promise.all([
+      this.pool.query<GymClassRow>(query, params),
+      this.pool.query<{ total: string }>(
+        `SELECT COUNT(*)::int AS total FROM classes${activity ? ` WHERE activity ILIKE $${paramIndex + 2}` : ''}`,
+        activity ? [...params, `%${activity}%`] : [],
+      ),
+    ]);
+
+    const data = dataResult.rows.map(toGymClass);
+    const total = Number(totalResult.rows[0].total);
+    const totalPages = Math.ceil(total / limit);
+
+    return { data, total, page, limit, totalPages };
   }
 
   // GET /api/classes/:id
