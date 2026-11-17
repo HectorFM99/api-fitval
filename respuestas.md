@@ -42,3 +42,46 @@
 ### Pregunta 6
 - **Por qué funciona sin volver a hacer login:** Porque `StaffGuard` consulta la base de datos en tiempo real mediante `UsersService`.
 - **Qué pasaría si el rol estuviera en el token:** El sistema seguiría denegando el acceso (`403`) hasta generar un nuevo token con el login actualizado.
+
+---
+
+## Parte 6
+### Pregunta 7
+- **Qué se prueba con los tests unitarios:** Que `toGymClass`, `toPlan`, `ClassesService` (incluido `findPage`) y `StaffGuard` funcionan aislados, sin base de datos ni HTTP real.
+- **Dónde están:** En `src/**/*.spec.ts`, ejecutados con `npm test`. Pasan 13 tests.
+
+---
+
+## Parte 7
+### Pregunta 8
+- **Qué prueban los tests de integración (e2e):** Que la API responde correctamente por HTTP: estado `healthy`, listado de clases, login con token, y que las clases devuelven `403` sin rol de staff.
+- **Dónde están:** En `test/fitval.e2e-spec.ts`, ejecutados con `npm run test:e2e` contra PostgreSQL real.
+
+---
+
+## Parte 8
+### Pregunta 9
+- **Cómo funciona el versionado:** Con `enableVersioning({ type: VersioningType.URI, defaultVersion: '1' })`, las rutas se exponen bajo `/api/v1/...` y `/api/v2/...`.
+- **Cómo funciona la paginación:** `ListClassesQueryDto` recibe `page` y `limit`; `findPage` devuelve `{ data, total, page, totalPages }` con `OFFSET`/`LIMIT` en SQL.
+
+---
+
+## Parte 9
+### Pregunta 10
+- **Helmet:** Aplica cabeceras de seguridad; `crossOriginResourcePolicy: 'cross-origin'` permite compartir recursos entre orígenes.
+- **AllExceptionsFilter:** Unifica el formato de error con `{ timestamp, path, message }` para cualquier excepción no controlada.
+- **Throttler:** Global de 20 req/min por IP (`APP_GUARD` + `ThrottlerGuard`) y `@Throttle({ default: { limit: 5, ttl: 60000 } })` solo en login (5 intentos/min).
+
+---
+
+## Parte 10
+### Pregunta 11
+- **GET trainers con especialidades:** `JOIN` entre `trainers`, `trainer_specialties` y `specialties`, mapeado con `toTrainer` que agrupa las especialidades por monitor.
+- **POST con transacción:** `trainersService.create` abre `BEGIN`, inserta monitor e especialidades, hace `COMMIT`; si falla (violación única 23505 DNI/correo) hace `ROLLBACK` y responde `409 Conflict`.
+
+---
+
+## Parte 11
+### Pregunta 12
+- **Subida de foto:** `multer` con `diskStorage` en `./uploads`, `fileFilter` que solo permite `.jpg/.jpeg/.png`, y `limits.fileSize` de 2 MB.
+- **Foto persistida:** La ruta se guarda en `trainers.photo_url` y se sirve estáticamente con `useStaticAssets('uploads', { prefix: '/uploads' })` bajo `/uploads/`.

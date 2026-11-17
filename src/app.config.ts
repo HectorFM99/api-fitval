@@ -3,8 +3,10 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
+import helmet from 'helmet';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
-// Configuración común de la API: prefijo, versiones y validación de DTO
+// Configuración común de la API: prefijo, versiones, seguridad y validación de DTO
 export function configureApp(app: INestApplication) {
   // Todas las rutas empiezan por /api
   app.setGlobalPrefix('api');
@@ -14,6 +16,12 @@ export function configureApp(app: INestApplication) {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
+  // Cabeceras de seguridad con Helmet
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
+  // Filtro global de excepciones: mismo formato en todos los errores
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Comprueba los DTO en todas las rutas
   app.useGlobalPipes(

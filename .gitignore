@@ -46,6 +46,9 @@ lerna-debug.log*
 .temp
 .tmp
 
+# Fotos subidas (no se suben al repositorio)
+/uploads
+
 # Runtime data
 pids
 *.pid

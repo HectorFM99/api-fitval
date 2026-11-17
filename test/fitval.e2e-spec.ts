@@ -129,4 +129,43 @@ describe('API de FitVal', () => {
 
     expect(response.status).toBe(400);
   });
+
+  it('GET /api/v1/classes/999999 devuelve 404 con path y timestamp', async () => {
+    const response = await request(app.getHttpServer()).get(
+      '/api/v1/classes/999999',
+    );
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('statusCode', 404);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body).toHaveProperty('path', '/api/v1/classes/999999');
+    expect(response.body).toHaveProperty('timestamp');
+  });
+
+  it('Las respuestas no llevan la cabecera x-powered-by', async () => {
+    const response = await request(app.getHttpServer()).get('/api/v1/plans');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['x-powered-by']).toBeUndefined();
+  });
+
+  it('GET /api/v1/trainers/1 responde 200 con specialties', async () => {
+    const response = await request(app.getHttpServer()).get(
+      '/api/v1/trainers/1',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('specialties', [
+      'Ciclo indoor',
+      'Fuerza',
+    ]);
+  });
+
+  it('POST /api/v1/trainers/1/photo sin token responde 401', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/trainers/1/photo')
+      .attach('photo', Buffer.from('hola'), 'foto.png');
+
+    expect(response.status).toBe(401);
+  });
 });
