@@ -72,7 +72,7 @@ export class ClassesService {
       this.pool.query<GymClassRow>(query, params),
       this.pool.query<{ total: string }>(
         `SELECT COUNT(*)::int AS total FROM classes${activity ? ` WHERE activity ILIKE $${paramIndex + 2}` : ''}`,
-        activity ? [...params, `%${activity}%`] : [],
+        activity ? ([...params, `%${activity}%`] as (string | number)[]) : [],
       ),
     ]);
 
