@@ -3,9 +3,8 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
-import { AllExceptionsFilter } from '../common/all-exceptions.filter';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 // Configuración común de la API: prefijo, versiones, seguridad y validación de DTO
 export function configureApp(app: INestApplication) {

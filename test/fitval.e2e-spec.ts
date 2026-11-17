@@ -112,9 +112,14 @@ describe('API de FitVal', () => {
       .query({ page: 1, limit: 3 });
 
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(3);
-    expect(response.body.total).toBeDefined();
-    expect(response.body.totalPages).toBeDefined();
+    const classesPage = response.body as {
+      data: unknown[];
+      total: number;
+      totalPages: number;
+    };
+    expect(classesPage.data).toHaveLength(3);
+    expect(classesPage.total).toBeDefined();
+    expect(classesPage.totalPages).toBeDefined();
   });
 
   it('GET /api/v2/classes?limit=100 responde 400', async () => {
@@ -150,10 +155,10 @@ describe('API de FitVal', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty(
-      'specialties',
-      ['Ciclo indoor', 'Fuerza'],
-    );
+    expect(response.body).toHaveProperty('specialties', [
+      'Ciclo indoor',
+      'Fuerza',
+    ]);
   });
 
   it('POST /api/v1/trainers/1/photo sin token responde 401', async () => {

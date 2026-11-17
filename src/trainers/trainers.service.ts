@@ -77,9 +77,7 @@ export class TrainersService {
       // Si es error de clave ajena duplicada (23505), responder 409
       const pgError = error as { code?: string };
       if (pgError.code === '23505') {
-        throw new ConflictException(
-          'El DNI o el correo ya están registrados',
-        );
+        throw new ConflictException('El DNI o el correo ya están registrados');
       }
 
       throw error;
