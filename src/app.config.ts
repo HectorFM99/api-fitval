@@ -18,7 +18,7 @@ export function configureApp(app: INestApplication) {
   });
 
   // Cabeceras de seguridad con Helmet
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
   // Filtro global de excepciones: mismo formato en todos los errores
   app.useGlobalFilters(new AllExceptionsFilter());
