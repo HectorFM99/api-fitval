@@ -3,7 +3,6 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 // Configuración común de la API: prefijo, versiones y validación de DTO
 export function configureApp(app: INestApplication) {
