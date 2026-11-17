@@ -7,7 +7,7 @@ import { AppModule } from '../src/app.module';
 
 describe('API de FitVal', () => {
   let app: INestApplication;
-  let memberToken = ;
+  let memberToken = '';
 
   // Antes de todos los tests: arrancamos la API entera
   beforeAll(async () => {
