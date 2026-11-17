@@ -148,4 +148,24 @@ describe('API de FitVal', () => {
     expect(response.status).toBe(200);
     expect(response.headers['x-powered-by']).toBeUndefined();
   });
+
+  it('GET /api/v1/trainers/1 responde 200 con specialties', async () => {
+    const response = await request(app.getHttpServer()).get(
+      '/api/v1/trainers/1',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('specialties', [
+      'Ciclo indoor',
+      'Fuerza',
+    ]);
+  });
+
+  it('POST /api/v1/trainers/1/photo sin token responde 401', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/trainers/1/photo')
+      .attach('photo', Buffer.from('hola'), 'foto.png');
+
+    expect(response.status).toBe(401);
+  });
 });

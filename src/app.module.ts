@@ -6,6 +6,7 @@ import { PlansModule } from './plans/plans.module';
 import { ClassesModule } from './classes/classes.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { TrainersModule } from './trainers/trainers.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
@@ -14,14 +15,15 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     ThrottlerModule.forRoot([
       {
         name: 'short',
-        ttl: 60000, // 1 minuto
-        limit: 20, // 20 peticiones por minuto
+        ttl: 60000,
+        limit: 20,
       },
     ]),
     PlansModule,
     ClassesModule,
     UsersModule,
     AuthModule,
+    TrainersModule,
   ],
   controllers: [AppController],
   providers: [
