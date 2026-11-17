@@ -9,8 +9,14 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -35,11 +41,19 @@ function fileFilter(req: any, file: Express.Multer.File, callback: any) {
 }
 
 @Controller('trainers')
+@ApiTags('trainers')
 export class TrainersController {
   constructor(private readonly trainersService: TrainersService) {}
 
   // GET /api/v1/trainers/:id
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un monitor con sus especialidades' })
+  @ApiResponse({
+    status: 200,
+    description: 'El monitor con sus especialidades',
+  })
+  @ApiResponse({ status: 400, description: 'El id no es un número' })
+  @ApiResponse({ status: 404, description: 'El monitor no existe' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Trainer> {
     return this.trainersService.findOne(id);
   }
@@ -47,6 +61,21 @@ export class TrainersController {
   // POST /api/v1/trainers (solo personal / staff)
   @Post()
   @UseGuards(AuthGuard, StaffGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Crear un monitor con sus especialidades (solo personal)',
+  })
+  @ApiResponse({ status: 201, description: 'Monitor creado' })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos o especialidad inexistente',
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'No es personal del gimnasio' })
+  @ApiResponse({
+    status: 409,
+    description: 'El DNI o el correo ya están registrados',
+  })
   async create(@Body() dto: CreateTrainerDto): Promise<Trainer> {
     return this.trainersService.create(dto);
   }
@@ -54,6 +83,17 @@ export class TrainersController {
   // POST /api/v1/trainers/:id/photo (solo personal / staff)
   @Post(':id/photo')
   @UseGuards(AuthGuard, StaffGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Subir la foto de un monitor (solo personal)' })
+  @ApiResponse({
+    status: 201,
+    description: 'Foto subida y monitor actualizado',
+  })
+  @ApiResponse({ status: 400, description: 'Fichero inválido' })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'No es personal del gimnasio' })
+  @ApiResponse({ status: 404, description: 'El monitor no existe' })
   @UseInterceptors(
     FileInterceptor('photo', {
       storage: diskStorage({

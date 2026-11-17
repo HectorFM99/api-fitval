@@ -150,10 +150,10 @@ describe('API de FitVal', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty(
-      'specialties',
-      ['Ciclo indoor', 'Fuerza'],
-    );
+    expect(response.body).toHaveProperty('specialties', [
+      'Ciclo indoor',
+      'Fuerza',
+    ]);
   });
 
   it('POST /api/v1/trainers/1/photo sin token responde 401', async () => {
