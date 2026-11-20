@@ -85,3 +85,26 @@
 ### Pregunta 12
 - **Subida de foto:** `multer` con `diskStorage` en `./uploads`, `fileFilter` que solo permite `.jpg/.jpeg/.png`, y `limits.fileSize` de 2 MB.
 - **Foto persistida:** La ruta se guarda en `trainers.photo_url` y se sirve estáticamente con `useStaticAssets('uploads', { prefix: '/uploads' })` bajo `/uploads/`.
+
+---
+
+## Parte 13
+### Pregunta 13
+- **Qué dice ahora `/api/v1/health` en `database`:** Dice `"database": "postgres"` (el nombre de la base de datos por defecto de Supabase), no `"fitval"`.
+- **Por qué:** El endpoint ejecuta `SELECT current_database()`, que devuelve el nombre de la base de datos a la que está conectada la API en ese momento, que en Supabase es `postgres`.
+- **¿Has tenido que cambiar algo del código?** No. El código ya devuelve el nombre dinámico de la base de datos conectada, así que funciona igual con Docker que con Supabase sin modificaciones.
+
+---
+
+### Pregunta 14
+- **Qué ha pasado con la foto:** La foto se subió al disco local del servidor de Render (`uploads/`), pero al hacer un nuevo despliegue (`Deploy latest commit`), el disco efímero de Render se reinicia y la imagen física desaparece.
+- **¿Y con el `photoUrl`?** Sigue apuntando a la ruta antigua (`/uploads/xxx.png`), pero ese archivo ya no existe en el nuevo despliegue, así que devuelve 404.
+- **Por qué:** Render usa un sistema de archivos efímero; los archivos subidos no persisten entre despliegues.
+- **¿Dónde habría que guardar las fotos?** En un servicio de almacenamiento en la nube (por ejemplo Supabase Storage, AWS S3 o similar) con un bucket público, y guardar en la base de datos la URL remota, no una ruta local.
+
+---
+
+### Pregunta 15
+- **Ejercicio 13.8 — ¿por qué la Direct connection no funciona desde Render y el Session pooler sí?** La conexión directa apunta al puerto 5432 de PostgreSQL y requiere que Render esté en la misma red privada (VPC) de Supabase o que se añada la IP de Render a la lista de permitidos. Desde Render (fuera de Supabase) no es alcanzable, da `ENETUNREACH`. El Session pooler sí es accesible desde internet y es el que debe usarse.
+- **Ejercicio 13.9 — ¿qué código recibes y por qué?** Al cambiar `JWT_SECRET`, el token de Ana ya no es válido porque su firma fue generada con el secreto antiguo. La API responde `401 Unauthorized`.
+- **¿En qué situación real cambiarías el secreto a propósito?** Si se filtra o sospechas que está comprometido, para invalidar todos los tokens existentes y forzar a todos los usuarios a hacer login de nuevo.
