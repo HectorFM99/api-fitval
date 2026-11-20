@@ -8,6 +8,9 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 // Configuración común de la API: prefijo, versiones, seguridad y validación de DTO
 export function configureApp(app: INestApplication) {
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  });
   // Todas las rutas empiezan por /api
   app.setGlobalPrefix('api');
 
